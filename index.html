@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artix Screen Printing Ledger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-main: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: #1e293b;
+        }
+
+        .sidebar {
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .action-btn {
+            transition: all 0.2s;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+
+        .type-badge {
+            padding: 6px 14px;
+            border-radius: 24px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row">
+
+    <!-- Sidebar -->
+    <aside class="sidebar w-full md:w-80 p-8 flex flex-col hidden md:flex">
+        <div class="flex items-center gap-4 mb-12">
+            <div class="bg-indigo-600 p-3 rounded-2xl text-white shadow-lg shadow-indigo-200">
+                <i class="fas fa-palette fa-lg"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-extrabold tracking-tight text-slate-900 leading-none">Artix</h2>
+                <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Screen Printing</span>
+            </div>
+        </div>
+
+        <nav class="space-y-3 flex-1">
+            <a href="#" class="flex items-center gap-4 px-5 py-4 rounded-2xl bg-indigo-600 text-white font-bold shadow-md shadow-indigo-100">
+                <i class="fas fa-th-large w-5"></i> Dashboard
+            </a>
+            <a href="#" class="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all font-semibold">
+                <i class="fas fa-list-ul w-5"></i> All Records
+            </a>
+            <a href="#" class="flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all font-semibold">
+                <i class="fas fa-file-invoice w-5"></i> Reports
+            </a>
+        </nav>
+
+        <div class="mt-auto p-5 bg-indigo-50 rounded-2xl border border-indigo-100">
+            <div class="flex items-center gap-3 text-sm font-bold text-indigo-700">
+                <i class="fas fa-shield-alt"></i> Local Storage Active
+            </div>
+            <p class="text-[10px] text-indigo-400 mt-1 uppercase font-bold">Data is saved on your device</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 md:p-12 overflow-y-auto">
+        
+        <!-- Mobile Nav Placeholder -->
+        <div class="md:hidden flex items-center justify-between mb-8 bg-white p-4 rounded-2xl shadow-sm">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2 rounded-xl text-white">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <h2 class="font-black text-slate-800">Artix Screen</h2>
+            </div>
+            <button class="w-10 h-10 flex items-center justify-center bg-slate-100 rounded-xl"><i class="fas fa-bars"></i></button>
+        </div>
+
+        <!-- Header -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-10 gap-6">
+            <div>
+                <h1 class="text-3xl font-black text-slate-900">Operations Center</h1>
+                <p class="text-slate-500 mt-1 font-medium italic">"Quality Printing, Professional Records"</p>
+            </div>
+            <button onclick="exportToCSV()" class="action-btn px-6 py-3 bg-white border border-slate-200 rounded-2xl font-bold text-sm shadow-sm flex items-center justify-center gap-3 hover:shadow-md transition-all">
+                <i class="fas fa-cloud-download-alt text-indigo-500"></i> Export Ledger (.CSV)
+            </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div class="stat-card border-t-4 border-emerald-500">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Total Earnings</p>
+                <h3 id="totalSale" class="text-3xl font-black text-slate-900">Rs 0</h3>
+                <div class="mt-4 flex items-center text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 w-fit rounded-lg">
+                    <i class="fas fa-trending-up mr-2"></i> Cash Inflow
+                </div>
+            </div>
+
+            <div class="stat-card border-t-4 border-rose-500">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Total Expenses</p>
+                <h3 id="totalExpense" class="text-3xl font-black text-slate-900">Rs 0</h3>
+                <div class="mt-4 flex items-center text-xs font-bold text-rose-600 bg-rose-50 px-3 py-1.5 w-fit rounded-lg">
+                    <i class="fas fa-trending-down mr-2"></i> Cash Outflow
+                </div>
+            </div>
+
+            <div class="stat-card border-t-4 border-indigo-600">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Net Position</p>
+                <h3 id="netProfit" class="text-3xl font-black text-slate-900">Rs 0</h3>
+                <div class="mt-4 flex items-center text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 w-fit rounded-lg">
+                    <i class="fas fa-balance-scale mr-2"></i> Net Balance
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-10">
+            <!-- Form -->
+            <div class="xl:col-span-4">
+                <div class="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100">
+                    <h4 class="text-xl font-black text-slate-800 mb-8">Naya Record</h4>
+                    <form id="recordForm" class="space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tarikh (Date)</label>
+                            <input type="date" id="date" class="form-input" required>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Description</label>
+                            <input type="text" id="description" class="form-input" placeholder="e.g. 200 Paper Bags" required>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Record Type</label>
+                            <select id="type" class="form-input font-bold text-slate-700">
+                                <option value="sale">Sale (Payment In)</option>
+                                <option value="expense">Expense (Payment Out)</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Raqam (PKR)</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rs</span>
+                                <input type="number" id="amount" class="form-input pl-12 font-bold" placeholder="0" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="action-btn w-full py-5 bg-indigo-600 text-white rounded-2xl font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 mt-4">
+                            ADD TO LEDGER
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- History -->
+            <div class="xl:col-span-8">
+                <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center">
+                        <h4 class="text-xl font-black text-slate-800">Recent Transactions</h4>
+                        <button onclick="clearAll()" class="text-[10px] font-black text-rose-400 hover:text-rose-600 tracking-widest uppercase">
+                            Reset All
+                        </button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="bg-slate-50/50 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+                                    <th class="px-8 py-5">Date</th>
+                                    <th class="px-8 py-5">Activity</th>
+                                    <th class="px-8 py-5">Status</th>
+                                    <th class="px-8 py-5 text-right">Amount</th>
+                                    <th class="px-8 py-5 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody" class="divide-y divide-slate-50">
+                                <!-- Data rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div id="emptyState" class="p-20 text-center hidden">
+                        <i class="fas fa-receipt fa-3x text-slate-200 mb-4"></i>
+                        <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">No entries found yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let records = JSON.parse(localStorage.getItem('artix_v2_data')) || [];
+        const recordForm = document.getElementById('recordForm');
+        const tableBody = document.getElementById('tableBody');
+        const emptyState = document.getElementById('emptyState');
+
+        document.getElementById('date').valueAsDate = new Date();
+
+        recordForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const record = {
+                id: Date.now(),
+                date: document.getElementById('date').value,
+                desc: document.getElementById('description').value,
+                type: document.getElementById('type').value,
+                amount: parseFloat(document.getElementById('amount').value)
+            };
+            records.unshift(record);
+            syncData();
+            recordForm.reset();
+            document.getElementById('date').valueAsDate = new Date();
+        });
+
+        function deleteRecord(id) {
+            records = records.filter(r => r.id !== id);
+            syncData();
+        }
+
+        function clearAll() {
+            if(confirm("Warning: Kya aap waqai sara record saaf karna chahte hain?")) {
+                records = [];
+                syncData();
+            }
+        }
+
+        function syncData() {
+            localStorage.setItem('artix_v2_data', JSON.stringify(records));
+            refreshUI();
+        }
+
+        function refreshUI() {
+            tableBody.innerHTML = '';
+            let sales = 0;
+            let expenses = 0;
+
+            if (records.length === 0) {
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                records.forEach(r => {
+                    const isSale = r.type === 'sale';
+                    if(isSale) sales += r.amount; else expenses += r.amount;
+
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-slate-50 transition-colors group";
+                    row.innerHTML = `
+                        <td class="px-8 py-5 text-xs font-bold text-slate-500">${formatDate(r.date)}</td>
+                        <td class="px-8 py-5 text-sm font-bold text-slate-700">${r.desc}</td>
+                        <td class="px-8 py-5">
+                            <span class="type-badge ${isSale ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
+                                ${isSale ? 'Sale' : 'Expense'}
+                            </span>
+                        </td>
+                        <td class="px-8 py-5 text-right font-black ${isSale ? 'text-emerald-600' : 'text-rose-600'}">
+                            ${isSale ? '+' : '-'} Rs ${r.amount.toLocaleString()}
+                        </td>
+                        <td class="px-8 py-5 text-center">
+                            <button onclick="deleteRecord(${r.id})" class="text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            }
+
+            document.getElementById('totalSale').innerText = `Rs ${sales.toLocaleString()}`;
+            document.getElementById('totalExpense').innerText = `Rs ${expenses.toLocaleString()}`;
+            const net = sales - expenses;
+            const netEl = document.getElementById('netProfit');
+            netEl.innerText = `Rs ${net.toLocaleString()}`;
+            netEl.style.color = net >= 0 ? '#10b981' : '#ef4444';
+        }
+
+        function formatDate(d) {
+            return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+        }
+
+        function exportToCSV() {
+            if (records.length === 0) return;
+            let csv = "Date,Description,Type,Amount\n";
+            records.forEach(r => csv += `${r.date},"${r.desc}",${r.type},${r.amount}\n`);
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `Artix_Ledger_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+        }
+
+        refreshUI();
+    </script>
+</body>
+</html>
