@@ -20,15 +20,14 @@
             border-right: 1px solid #e2e8f0;
         }
 
-        /* Sidebar Hover Fix */
         .nav-link {
             transition: all 0.2s ease-in-out;
-            color: #64748b; /* slate-500 */
+            color: #64748b;
         }
 
         .nav-link:hover {
             background-color: #f1f5f9;
-            color: #1e293b; /* Dark text on hover so it doesn't disappear */
+            color: #1e293b;
         }
 
         .nav-link.active {
@@ -74,8 +73,8 @@
 
         .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
 
-        .badge-paid { background: #dcfce7; color: #15803d; }
-        .badge-unpaid { background: #fee2e2; color: #b91c1c; }
+        .badge-paid { background: #dcfce7; color: #15803d; cursor: pointer; }
+        .badge-unpaid { background: #fee2e2; color: #b91c1c; cursor: pointer; }
 
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -195,7 +194,7 @@
                     <thead>
                         <tr class="bg-slate-50 text-[10px] font-black uppercase text-slate-400 tracking-widest">
                             <th class="px-8 py-5">Date</th>
-                            <th class="px-8 py-5">Customer</th>
+                            <th class="px-8 py-5">Customer & Detail</th>
                             <th class="px-8 py-5">Product</th>
                             <th class="px-8 py-5">Status</th>
                             <th class="px-8 py-5 text-right">Amount</th>
@@ -259,6 +258,7 @@
                 <input type="date" id="saleDate" class="form-input" required>
                 <select id="saleCustomer" class="form-input" required><option value="">Select Customer</option></select>
                 <select id="saleProduct" class="form-input" required><option value="">Select Product</option></select>
+                <input type="text" id="saleDesc" class="form-input" placeholder="Sale Description (Optional)">
                 <input type="number" id="saleAmount" class="form-input" placeholder="Amount (Rs)" required>
                 <select id="saleStatus" class="form-input font-bold">
                     <option value="Paid">Paid</option>
@@ -389,6 +389,15 @@
             reader.readAsText(file);
         }
 
+        // Feature: Toggle Sale Status
+        function toggleSaleStatus(id) {
+            const sale = data.sales.find(s => s.id === id);
+            if(sale) {
+                sale.status = sale.status === 'Paid' ? 'Not Paid' : 'Paid';
+                saveAndRefresh();
+            }
+        }
+
         // Form Logic
         document.getElementById('saleForm').onsubmit = (e) => {
             e.preventDefault();
@@ -397,6 +406,7 @@
                 date: document.getElementById('saleDate').value,
                 customer: document.getElementById('saleCustomer').value,
                 product: document.getElementById('saleProduct').value,
+                desc: document.getElementById('saleDesc').value || '',
                 amount: parseFloat(document.getElementById('saleAmount').value),
                 status: document.getElementById('saleStatus').value
             });
@@ -451,7 +461,10 @@
             activity.innerHTML = data.sales.slice(0, 5).map(s => `
                 <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
                     <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600"><i class="fas fa-plus text-xs"></i></div>
-                    <div class="flex-1"><p class="text-sm font-bold text-slate-800">${s.customer}</p><p class="text-[10px] text-slate-400 font-bold">${s.product}</p></div>
+                    <div class="flex-1">
+                        <p class="text-sm font-bold text-slate-800">${s.customer}</p>
+                        <p class="text-[10px] text-slate-400 font-bold">${s.product}${s.desc ? ' • ' + s.desc : ''}</p>
+                    </div>
                     <p class="text-sm font-black text-indigo-600">Rs ${s.amount.toLocaleString()}</p>
                 </div>
             `).join('') || '<p class="text-center text-slate-400 text-sm py-4">No recent sales</p>';
@@ -459,7 +472,7 @@
             const pending = document.getElementById('pending-payments-list');
             const unpaids = data.sales.filter(s => s.status === 'Not Paid');
             pending.innerHTML = unpaids.length > 0 ? unpaids.slice(0, 5).map(u => `
-                <div class="flex justify-between items-center p-4 bg-rose-50/50 border border-rose-100 rounded-2xl">
+                <div onclick="toggleSaleStatus(${u.id})" class="flex justify-between items-center p-4 bg-rose-50/50 border border-rose-100 rounded-2xl cursor-pointer hover:bg-rose-100 transition-colors">
                     <div class="flex flex-col"><span class="text-sm font-black text-slate-800">${u.customer}</span><span class="text-[10px] font-bold text-slate-400">${u.date}</span></div>
                     <span class="text-sm font-black text-rose-600">Rs ${u.amount.toLocaleString()}</span>
                 </div>
@@ -468,11 +481,18 @@
 
         function renderSales() {
             document.getElementById('sales-list').innerHTML = data.sales.map(s => `
-                <tr class="hover:bg-slate-50">
+                <tr class="hover:bg-slate-50 transition-colors">
                     <td class="px-8 py-4 text-xs font-bold text-slate-400">${s.date}</td>
-                    <td class="px-8 py-4 font-bold text-slate-700">${s.customer}</td>
+                    <td class="px-8 py-4">
+                        <div class="font-bold text-slate-700">${s.customer}</div>
+                        <div class="text-[10px] text-slate-400 italic">${s.desc || 'No description'}</div>
+                    </td>
                     <td class="px-8 py-4 text-sm text-slate-600">${s.product}</td>
-                    <td class="px-8 py-4"><span class="px-3 py-1 rounded-full text-[10px] font-black ${s.status === 'Paid' ? 'badge-paid' : 'badge-unpaid'}">${s.status}</span></td>
+                    <td class="px-8 py-4">
+                        <button onclick="toggleSaleStatus(${s.id})" title="Click to change status" class="px-3 py-1 rounded-full text-[10px] font-black ${s.status === 'Paid' ? 'badge-paid' : 'badge-unpaid'}">
+                            ${s.status}
+                        </button>
+                    </td>
                     <td class="px-8 py-4 text-right font-black text-indigo-600">Rs ${s.amount.toLocaleString()}</td>
                     <td class="px-8 py-4 text-center"><button onclick="deleteItem('sales', ${s.id})" class="text-slate-300 hover:text-rose-500"><i class="fas fa-trash-alt"></i></button></td>
                 </tr>
