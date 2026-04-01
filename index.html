@@ -20,6 +20,23 @@
             border-right: 1px solid #e2e8f0;
         }
 
+        /* Sidebar Hover Fix */
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+            color: #64748b; /* slate-500 */
+        }
+
+        .nav-link:hover {
+            background-color: #f1f5f9;
+            color: #1e293b; /* Dark text on hover so it doesn't disappear */
+        }
+
+        .nav-link.active {
+            background-color: #4f46e5 !important;
+            color: #ffffff !important;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2);
+        }
+
         .stat-card {
             background: white;
             border-radius: 24px;
@@ -42,12 +59,6 @@
             border-color: #4f46e5;
             box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.05);
         }
-
-        .nav-link.active {
-            background-color: #4f46e5;
-            color: white;
-            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2);
-        }
         
         .screen { display: none; }
         .screen.active { display: block; }
@@ -61,12 +72,11 @@
             transition: all 0.2s;
         }
 
-        .btn-primary:hover { background-color: #4338ca; }
+        .btn-primary:hover { background-color: #4338ca; transform: translateY(-1px); }
 
         .badge-paid { background: #dcfce7; color: #15803d; }
         .badge-unpaid { background: #fee2e2; color: #b91c1c; }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -84,19 +94,19 @@
         </div>
 
         <nav class="space-y-2 flex-1 overflow-y-auto pr-2">
-            <button onclick="showScreen('dashboard')" id="nav-dashboard" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all font-bold active text-left">
+            <button onclick="showScreen('dashboard')" id="nav-dashboard" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold active text-left">
                 <i class="fas fa-chart-pie w-5"></i> Dashboard
             </button>
-            <button onclick="showScreen('sales')" id="nav-sales" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all font-bold text-left">
+            <button onclick="showScreen('sales')" id="nav-sales" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold text-left">
                 <i class="fas fa-shopping-cart w-5"></i> Sales
             </button>
-            <button onclick="showScreen('expenses')" id="nav-expenses" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all font-bold text-left">
+            <button onclick="showScreen('expenses')" id="nav-expenses" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold text-left">
                 <i class="fas fa-wallet w-5"></i> Expenses
             </button>
-            <button onclick="showScreen('customers')" id="nav-customers" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all font-bold text-left">
+            <button onclick="showScreen('customers')" id="nav-customers" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold text-left">
                 <i class="fas fa-users w-5"></i> Customers
             </button>
-            <button onclick="showScreen('products')" id="nav-products" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all font-bold text-left">
+            <button onclick="showScreen('products')" id="nav-products" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl font-bold text-left">
                 <i class="fas fa-box w-5"></i> Product List
             </button>
         </nav>
@@ -162,15 +172,11 @@
                         <h4 class="text-lg font-black">Recent Activity</h4>
                         <button onclick="showScreen('sales')" class="text-xs font-bold text-indigo-600">View All</button>
                     </div>
-                    <div id="recent-activity-list" class="space-y-4">
-                        <!-- Activity goes here -->
-                    </div>
+                    <div id="recent-activity-list" class="space-y-4"></div>
                 </div>
                 <div class="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
                     <h4 class="text-lg font-black mb-6">Unpaid Invoices</h4>
-                    <div id="pending-payments-list" class="space-y-4">
-                        <!-- Pending goes here -->
-                    </div>
+                    <div id="pending-payments-list" class="space-y-4"></div>
                 </div>
             </div>
         </div>
@@ -204,7 +210,7 @@
         <!-- Expenses Screen -->
         <div id="screen-expenses" class="screen">
             <div class="flex justify-between items-center mb-10">
-                <h1 class="text-3xl font-black text-slate-900 text-rose-600">Expenses Manager</h1>
+                <h1 class="text-3xl font-black text-rose-600">Expenses Manager</h1>
                 <button onclick="openModal('expenseModal')" class="bg-rose-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2">
                     <i class="fas fa-minus-circle"></i> Add Expense
                 </button>
@@ -242,7 +248,6 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="products-grid"></div>
         </div>
-
     </main>
 
     <!-- Modals -->
@@ -320,15 +325,13 @@
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(n => {
-                n.classList.remove('active', 'bg-indigo-600', 'text-white');
-                n.classList.add('text-slate-500');
+                n.classList.remove('active');
             });
+            
             document.getElementById('screen-' + screenId).classList.add('active');
             const activeNav = document.getElementById('nav-' + screenId);
-            if(activeNav) {
-                activeNav.classList.add('active', 'bg-indigo-600', 'text-white');
-                activeNav.classList.remove('text-slate-500');
-            }
+            if(activeNav) activeNav.classList.add('active');
+            
             refreshAllUI();
         }
 
@@ -352,7 +355,6 @@
             document.getElementById('modalOverlay').classList.add('hidden');
         }
 
-        // Data Management
         function saveAndRefresh() {
             localStorage.setItem('artix_v4_store', JSON.stringify(data));
             closeModal();
@@ -376,21 +378,18 @@
             reader.onload = (e) => {
                 try {
                     const restored = JSON.parse(e.target.result);
-                    if (restored.sales && restored.expenses) {
+                    if (restored.sales) {
                         data = restored;
                         saveAndRefresh();
-                        alert("Data successfully restore ho gaya hai!");
-                    } else {
-                        throw new Error("Invalid file format");
                     }
                 } catch (err) {
-                    alert("Ghalti: Yeh Artix backup file nahi hai.");
+                    alert("Invalid File!");
                 }
             };
             reader.readAsText(file);
         }
 
-        // Form Handlers
+        // Form Logic
         document.getElementById('saleForm').onsubmit = (e) => {
             e.preventDefault();
             data.sales.unshift({
@@ -431,7 +430,7 @@
             e.target.reset();
         };
 
-        // UI Refresh Logic
+        // Render Logic
         function refreshAllUI() {
             renderDashboard();
             renderSales();
@@ -446,10 +445,7 @@
             
             document.getElementById('dash-total-sales').innerText = `Rs ${totalSales.toLocaleString()}`;
             document.getElementById('dash-total-expenses').innerText = `Rs ${totalExp.toLocaleString()}`;
-            const net = totalSales - totalExp;
-            const netEl = document.getElementById('dash-net-profit');
-            netEl.innerText = `Rs ${net.toLocaleString()}`;
-            netEl.className = `text-3xl font-black ${net >= 0 ? 'text-slate-900' : 'text-rose-600'}`;
+            document.getElementById('dash-net-profit').innerText = `Rs ${(totalSales - totalExp).toLocaleString()}`;
 
             const activity = document.getElementById('recent-activity-list');
             activity.innerHTML = data.sales.slice(0, 5).map(s => `
@@ -458,80 +454,58 @@
                     <div class="flex-1"><p class="text-sm font-bold text-slate-800">${s.customer}</p><p class="text-[10px] text-slate-400 font-bold">${s.product}</p></div>
                     <p class="text-sm font-black text-indigo-600">Rs ${s.amount.toLocaleString()}</p>
                 </div>
-            `).join('') || '<p class="text-center text-slate-400 text-sm italic py-4">No recent activity</p>';
+            `).join('') || '<p class="text-center text-slate-400 text-sm py-4">No recent sales</p>';
 
             const pending = document.getElementById('pending-payments-list');
             const unpaids = data.sales.filter(s => s.status === 'Not Paid');
-            if(unpaids.length > 0) {
-                pending.innerHTML = unpaids.slice(0, 5).map(u => `
-                    <div class="flex justify-between items-center p-4 bg-rose-50/50 border border-rose-100 rounded-2xl">
-                        <div class="flex flex-col">
-                            <span class="text-sm font-black text-slate-800">${u.customer}</span>
-                            <span class="text-[10px] font-bold text-slate-400">${u.date}</span>
-                        </div>
-                        <span class="text-sm font-black text-rose-600">Rs ${u.amount.toLocaleString()}</span>
-                    </div>
-                `).join('');
-            } else {
-                pending.innerHTML = '<div class="text-center py-10 text-slate-300 font-medium italic">Koi pending payments nahi hain.</div>';
-            }
+            pending.innerHTML = unpaids.length > 0 ? unpaids.slice(0, 5).map(u => `
+                <div class="flex justify-between items-center p-4 bg-rose-50/50 border border-rose-100 rounded-2xl">
+                    <div class="flex flex-col"><span class="text-sm font-black text-slate-800">${u.customer}</span><span class="text-[10px] font-bold text-slate-400">${u.date}</span></div>
+                    <span class="text-sm font-black text-rose-600">Rs ${u.amount.toLocaleString()}</span>
+                </div>
+            `).join('') : '<p class="text-center text-slate-300 py-10">No pending payments</p>';
         }
 
         function renderSales() {
-            const list = document.getElementById('sales-list');
-            list.innerHTML = data.sales.map(s => `
-                <tr class="hover:bg-slate-50 transition-colors">
+            document.getElementById('sales-list').innerHTML = data.sales.map(s => `
+                <tr class="hover:bg-slate-50">
                     <td class="px-8 py-4 text-xs font-bold text-slate-400">${s.date}</td>
                     <td class="px-8 py-4 font-bold text-slate-700">${s.customer}</td>
                     <td class="px-8 py-4 text-sm text-slate-600">${s.product}</td>
-                    <td class="px-8 py-4">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black ${s.status === 'Paid' ? 'badge-paid' : 'badge-unpaid'}">
-                            ${s.status}
-                        </span>
-                    </td>
+                    <td class="px-8 py-4"><span class="px-3 py-1 rounded-full text-[10px] font-black ${s.status === 'Paid' ? 'badge-paid' : 'badge-unpaid'}">${s.status}</span></td>
                     <td class="px-8 py-4 text-right font-black text-indigo-600">Rs ${s.amount.toLocaleString()}</td>
-                    <td class="px-8 py-4 text-center">
-                        <button onclick="deleteItem('sales', ${s.id})" class="text-slate-300 hover:text-rose-500 transition-colors"><i class="fas fa-trash-alt"></i></button>
-                    </td>
+                    <td class="px-8 py-4 text-center"><button onclick="deleteItem('sales', ${s.id})" class="text-slate-300 hover:text-rose-500"><i class="fas fa-trash-alt"></i></button></td>
                 </tr>
             `).join('');
         }
 
         function renderExpenses() {
-            const list = document.getElementById('expenses-list');
-            list.innerHTML = data.expenses.map(e => `
-                <tr class="hover:bg-rose-50/30 transition-colors">
+            document.getElementById('expenses-list').innerHTML = data.expenses.map(e => `
+                <tr class="hover:bg-rose-50/30">
                     <td class="px-8 py-4 text-xs font-bold text-slate-400">${e.date}</td>
                     <td class="px-8 py-4 font-bold text-slate-700">${e.desc}</td>
                     <td class="px-8 py-4 text-right font-black text-rose-600">Rs ${e.amount.toLocaleString()}</td>
-                    <td class="px-8 py-4 text-center">
-                        <button onclick="deleteItem('expenses', ${e.id})" class="text-slate-300 hover:text-rose-500 transition-colors"><i class="fas fa-trash-alt"></i></button>
-                    </td>
+                    <td class="px-8 py-4 text-center"><button onclick="deleteItem('expenses', ${e.id})" class="text-slate-300 hover:text-rose-500"><i class="fas fa-trash-alt"></i></button></td>
                 </tr>
             `).join('');
         }
 
         function renderCustomers() {
-            const grid = document.getElementById('customers-grid');
-            grid.innerHTML = data.customers.map(c => `
+            document.getElementById('customers-grid').innerHTML = data.customers.map(c => `
                 <div class="stat-card relative group">
-                    <button onclick="deleteItem('customers', ${c.id})" class="absolute top-4 right-4 text-slate-200 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><i class="fas fa-times-circle"></i></button>
+                    <button onclick="deleteItem('customers', ${c.id})" class="absolute top-4 right-4 text-slate-200 hover:text-rose-500 opacity-0 group-hover:opacity-100"><i class="fas fa-times-circle"></i></button>
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600 font-black">${c.name[0]}</div>
-                        <div>
-                            <h4 class="font-black text-slate-800">${c.name}</h4>
-                            <p class="text-xs text-slate-400 font-bold">${c.phone || 'No Phone'}</p>
-                        </div>
+                        <div><h4 class="font-black text-slate-800">${c.name}</h4><p class="text-xs text-slate-400 font-bold">${c.phone || 'N/A'}</p></div>
                     </div>
                 </div>
             `).join('');
         }
 
         function renderProducts() {
-            const grid = document.getElementById('products-grid');
-            grid.innerHTML = data.products.map(p => `
+            document.getElementById('products-grid').innerHTML = data.products.map(p => `
                 <div class="stat-card border-l-4 border-indigo-500 relative group">
-                    <button onclick="deleteItem('products', ${p.id})" class="absolute top-4 right-4 text-slate-200 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><i class="fas fa-times-circle"></i></button>
+                    <button onclick="deleteItem('products', ${p.id})" class="absolute top-4 right-4 text-slate-200 hover:text-rose-500 opacity-0 group-hover:opacity-100"><i class="fas fa-times-circle"></i></button>
                     <h4 class="font-black text-slate-800 mb-1">${p.name}</h4>
                     <p class="text-sm font-black text-indigo-600">Rs ${p.price || 0}</p>
                 </div>
@@ -539,13 +513,12 @@
         }
 
         function deleteItem(type, id) {
-            if(confirm("Kya aap waqai ise delete karna chahte hain?")) {
+            if(confirm("Confirm delete?")) {
                 data[type] = data[type].filter(item => item.id !== id);
                 saveAndRefresh();
             }
         }
 
-        // Init
         refreshAllUI();
     </script>
 </body>
