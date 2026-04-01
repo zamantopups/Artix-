@@ -3,23 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Artix Screen Printing Ledger</title>
+    <title>Artix - Business Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
-        :root {
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
-            --success: #10b981;
-            --danger: #ef4444;
-            --bg-main: #f8fafc;
-        }
-
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
             color: #1e293b;
         }
 
@@ -30,42 +22,25 @@
 
         .stat-card {
             background: white;
-            border-radius: 20px;
+            border-radius: 24px;
             padding: 1.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
             border: 1px solid #f1f5f9;
         }
 
         .form-input {
             width: 100%;
             padding: 0.8rem 1rem;
-            border-radius: 12px;
+            border-radius: 14px;
             border: 1px solid #e2e8f0;
-            background-color: #ffffff;
+            background-color: #fcfcfc;
             transition: all 0.2s;
         }
 
         .form-input:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
-        }
-
-        .action-btn {
-            transition: all 0.2s;
-        }
-
-        .action-btn:active {
-            transform: scale(0.98);
-        }
-
-        .type-badge {
-            padding: 6px 14px;
-            border-radius: 24px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.05);
         }
 
         .nav-link.active {
@@ -74,402 +49,504 @@
             box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.2);
         }
         
-        .screen {
-            display: none;
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 14px;
+            font-weight: 700;
+            transition: all 0.2s;
         }
-        
-        .screen.active {
-            display: block;
-        }
+
+        .btn-primary:hover { background-color: #4338ca; }
+
+        .badge-paid { background: #dcfce7; color: #15803d; }
+        .badge-unpaid { background: #fee2e2; color: #b91c1c; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col md:flex-row">
 
     <!-- Sidebar -->
-    <aside class="sidebar w-full md:w-80 p-8 flex flex-col hidden md:flex">
-        <div class="flex items-center gap-4 mb-12">
-            <div class="bg-indigo-600 p-3 rounded-2xl text-white shadow-lg shadow-indigo-200">
-                <i class="fas fa-palette fa-lg"></i>
+    <aside class="sidebar w-full md:w-72 p-6 flex flex-col hidden md:flex sticky top-0 h-screen">
+        <div class="flex items-center gap-3 mb-10 px-2">
+            <div class="bg-indigo-600 w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                <span class="text-xl font-black">A</span>
             </div>
-            <div>
-                <h2 class="text-xl font-extrabold tracking-tight text-slate-900 leading-none">Artix</h2>
-                <span class="text-xs font-bold text-indigo-600 uppercase tracking-widest">Screen Printing</span>
-            </div>
+            <h2 class="text-2xl font-black tracking-tight text-slate-900">Artix</h2>
         </div>
 
-        <nav class="space-y-3 flex-1">
-            <button onclick="showScreen('dashboard')" id="nav-dashboard" class="nav-link w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all font-bold active">
-                <i class="fas fa-th-large w-5"></i> Dashboard
+        <nav class="space-y-2 flex-1 overflow-y-auto pr-2">
+            <button onclick="showScreen('dashboard')" id="nav-dashboard" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all font-bold active text-left">
+                <i class="fas fa-chart-pie w-5"></i> Dashboard
             </button>
-            <button onclick="showScreen('records')" id="nav-records" class="nav-link w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all font-semibold">
-                <i class="fas fa-list-ul w-5"></i> All Records
+            <button onclick="showScreen('sales')" id="nav-sales" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all font-bold text-left">
+                <i class="fas fa-shopping-cart w-5"></i> Sales
             </button>
-            <button onclick="showScreen('reports')" id="nav-reports" class="nav-link w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 transition-all font-semibold">
-                <i class="fas fa-file-invoice w-5"></i> Reports
+            <button onclick="showScreen('expenses')" id="nav-expenses" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all font-bold text-left">
+                <i class="fas fa-wallet w-5"></i> Expenses
+            </button>
+            <button onclick="showScreen('customers')" id="nav-customers" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all font-bold text-left">
+                <i class="fas fa-users w-5"></i> Customers
+            </button>
+            <button onclick="showScreen('products')" id="nav-products" class="nav-link w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-slate-500 hover:bg-slate-50 transition-all font-bold text-left">
+                <i class="fas fa-box w-5"></i> Product List
             </button>
         </nav>
 
-        <div class="mt-auto p-5 bg-indigo-50 rounded-2xl border border-indigo-100">
-            <div class="flex items-center gap-3 text-sm font-bold text-indigo-700">
-                <i class="fas fa-shield-alt"></i> Local Storage Active
+        <div class="mt-8 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2">Data Management</p>
+            <div class="space-y-2">
+                <button onclick="backupData()" class="w-full text-left text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-2">
+                    <i class="fas fa-download"></i> Download Backup
+                </button>
+                <label class="w-full text-left text-xs font-bold text-slate-600 hover:text-slate-800 flex items-center gap-2 cursor-pointer">
+                    <i class="fas fa-upload"></i> Restore Backup
+                    <input type="file" id="importFile" class="hidden" onchange="restoreData(event)">
+                </label>
             </div>
-            <p class="text-[10px] text-indigo-400 mt-1 uppercase font-bold">Data is saved on your device</p>
         </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="flex-1 p-6 md:p-12 overflow-y-auto">
+    <main class="flex-1 p-6 md:p-10 overflow-y-auto">
         
-        <!-- Mobile Nav -->
-        <div class="md:hidden flex items-center justify-between mb-8 bg-white p-4 rounded-2xl shadow-sm">
-            <div class="flex items-center gap-3">
-                <div class="bg-indigo-600 p-2 rounded-xl text-white">
-                    <i class="fas fa-palette"></i>
-                </div>
-                <h2 class="font-black text-slate-800">Artix Screen</h2>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="showScreen('dashboard')" class="p-2 text-indigo-600"><i class="fas fa-th-large"></i></button>
-                <button onclick="showScreen('records')" class="p-2 text-slate-600"><i class="fas fa-list-ul"></i></button>
-                <button onclick="showScreen('reports')" class="p-2 text-slate-600"><i class="fas fa-file-invoice"></i></button>
-            </div>
-        </div>
-
         <!-- Dashboard Screen -->
         <div id="screen-dashboard" class="screen active">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between mb-10 gap-6">
+            <header class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 class="text-3xl font-black text-slate-900">Operations Center</h1>
-                    <p class="text-slate-500 mt-1 font-medium italic">"Quality Printing, Professional Records"</p>
+                    <h1 class="text-3xl font-black text-slate-900">Executive Dashboard</h1>
+                    <p class="text-slate-500 font-medium mt-1">Artix business ki mukammal report yahan dekhein.</p>
                 </div>
-                <button onclick="exportToCSV()" class="action-btn px-6 py-3 bg-white border border-slate-200 rounded-2xl font-bold text-sm shadow-sm flex items-center justify-center gap-3 hover:shadow-md transition-all">
-                    <i class="fas fa-cloud-download-alt text-indigo-500"></i> Export Ledger (.CSV)
+                <div class="flex gap-2">
+                     <button onclick="backupData()" class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold shadow-sm hover:bg-slate-50 transition-all">
+                        <i class="fas fa-save mr-2 text-indigo-500"></i> Backup Now
+                    </button>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+                <div class="stat-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="bg-indigo-50 p-3 rounded-2xl text-indigo-600"><i class="fas fa-hand-holding-usd fa-lg"></i></div>
+                        <span class="text-[10px] font-black bg-indigo-50 text-indigo-600 px-2 py-1 rounded">Total Sales</span>
+                    </div>
+                    <h3 id="dash-total-sales" class="text-3xl font-black">Rs 0</h3>
+                </div>
+                <div class="stat-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="bg-rose-50 p-3 rounded-2xl text-rose-600"><i class="fas fa-receipt fa-lg"></i></div>
+                        <span class="text-[10px] font-black bg-rose-50 text-rose-600 px-2 py-1 rounded">Total Expenses</span>
+                    </div>
+                    <h3 id="dash-total-expenses" class="text-3xl font-black">Rs 0</h3>
+                </div>
+                <div class="stat-card">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="bg-emerald-50 p-3 rounded-2xl text-emerald-600"><i class="fas fa-vault fa-lg"></i></div>
+                        <span class="text-[10px] font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded">Net Position</span>
+                    </div>
+                    <h3 id="dash-net-profit" class="text-3xl font-black">Rs 0</h3>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h4 class="text-lg font-black">Recent Activity</h4>
+                        <button onclick="showScreen('sales')" class="text-xs font-bold text-indigo-600">View All</button>
+                    </div>
+                    <div id="recent-activity-list" class="space-y-4">
+                        <!-- Activity goes here -->
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
+                    <h4 class="text-lg font-black mb-6">Unpaid Invoices</h4>
+                    <div id="pending-payments-list" class="space-y-4">
+                        <!-- Pending goes here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Screen -->
+        <div id="screen-sales" class="screen">
+            <div class="flex justify-between items-center mb-10">
+                <h1 class="text-3xl font-black text-slate-900">Sales Ledger</h1>
+                <button onclick="openModal('saleModal')" class="btn-primary flex items-center gap-2">
+                    <i class="fas fa-plus"></i> New Sale
                 </button>
             </div>
-
-            <!-- Stats -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                <div class="stat-card border-t-4 border-emerald-500">
-                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Total Earnings</p>
-                    <h3 id="totalSale" class="text-3xl font-black text-slate-900">Rs 0</h3>
-                    <div class="mt-4 flex items-center text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 w-fit rounded-lg">
-                        <i class="fas fa-trending-up mr-2"></i> Cash Inflow
-                    </div>
-                </div>
-
-                <div class="stat-card border-t-4 border-rose-500">
-                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Total Expenses</p>
-                    <h3 id="totalExpense" class="text-3xl font-black text-slate-900">Rs 0</h3>
-                    <div class="mt-4 flex items-center text-xs font-bold text-rose-600 bg-rose-50 px-3 py-1.5 w-fit rounded-lg">
-                        <i class="fas fa-trending-down mr-2"></i> Cash Outflow
-                    </div>
-                </div>
-
-                <div class="stat-card border-t-4 border-indigo-600">
-                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Net Position</p>
-                    <h3 id="netProfit" class="text-3xl font-black text-slate-900">Rs 0</h3>
-                    <div class="mt-4 flex items-center text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1.5 w-fit rounded-lg">
-                        <i class="fas fa-balance-scale mr-2"></i> Net Balance
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 xl:grid-cols-12 gap-10">
-                <!-- Form -->
-                <div class="xl:col-span-4">
-                    <div class="bg-white p-8 rounded-[32px] shadow-sm border border-slate-100">
-                        <h4 class="text-xl font-black text-slate-800 mb-8">Naya Record</h4>
-                        <form id="recordForm" class="space-y-6">
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Tarikh (Date)</label>
-                                <input type="date" id="date" class="form-input" required>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Description</label>
-                                <input type="text" id="description" class="form-input" placeholder="e.g. 200 Paper Bags" required>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Record Type</label>
-                                <select id="type" class="form-input font-bold text-slate-700">
-                                    <option value="sale">Sale (Payment In)</option>
-                                    <option value="expense">Expense (Payment Out)</option>
-                                </select>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Raqam (PKR)</label>
-                                <div class="relative">
-                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">Rs</span>
-                                    <input type="number" id="amount" class="form-input pl-12 font-bold" placeholder="0" required>
-                                </div>
-                            </div>
-                            <button type="submit" class="action-btn w-full py-5 bg-indigo-600 text-white rounded-2xl font-black shadow-xl shadow-indigo-100 hover:bg-indigo-700 mt-4">
-                                ADD TO LEDGER
-                            </button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- History -->
-                <div class="xl:col-span-8">
-                    <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-                        <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center">
-                            <h4 class="text-xl font-black text-slate-800">Recent Transactions</h4>
-                            <button onclick="clearAll()" class="text-[10px] font-black text-rose-400 hover:text-rose-600 tracking-widest uppercase">
-                                Reset All
-                            </button>
-                        </div>
-
-                        <div class="overflow-x-auto">
-                            <table class="w-full">
-                                <thead>
-                                    <tr class="bg-slate-50/50 text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                                        <th class="px-8 py-5">Date</th>
-                                        <th class="px-8 py-5">Activity</th>
-                                        <th class="px-8 py-5">Status</th>
-                                        <th class="px-8 py-5 text-right">Amount</th>
-                                        <th class="px-8 py-5 text-center">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tableBody" class="divide-y divide-slate-50">
-                                    <!-- Data rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <div id="emptyState" class="p-20 text-center hidden">
-                            <i class="fas fa-receipt fa-3x text-slate-200 mb-4"></i>
-                            <p class="text-slate-400 font-bold uppercase text-xs tracking-widest">No entries found yet</p>
-                        </div>
-                    </div>
-                </div>
+            
+            <div class="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-slate-50 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                            <th class="px-8 py-5">Date</th>
+                            <th class="px-8 py-5">Customer</th>
+                            <th class="px-8 py-5">Product</th>
+                            <th class="px-8 py-5">Status</th>
+                            <th class="px-8 py-5 text-right">Amount</th>
+                            <th class="px-8 py-5 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-list" class="divide-y divide-slate-50"></tbody>
+                </table>
             </div>
         </div>
 
-        <!-- All Records Screen -->
-        <div id="screen-records" class="screen">
-            <h1 class="text-3xl font-black text-slate-900 mb-8">Full Transaction Log</h1>
-            <div class="bg-white rounded-[32px] shadow-sm border border-slate-100 overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr class="bg-slate-50/50 text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                                <th class="px-8 py-5">Date</th>
-                                <th class="px-8 py-5">Activity Details</th>
-                                <th class="px-8 py-5">Category</th>
-                                <th class="px-8 py-5 text-right">Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody id="fullLogBody" class="divide-y divide-slate-50">
-                            <!-- Full data rows -->
-                        </tbody>
-                    </table>
-                </div>
+        <!-- Expenses Screen -->
+        <div id="screen-expenses" class="screen">
+            <div class="flex justify-between items-center mb-10">
+                <h1 class="text-3xl font-black text-slate-900 text-rose-600">Expenses Manager</h1>
+                <button onclick="openModal('expenseModal')" class="bg-rose-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2">
+                    <i class="fas fa-minus-circle"></i> Add Expense
+                </button>
+            </div>
+            
+            <div class="bg-white rounded-[24px] border border-slate-100 shadow-sm overflow-hidden">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-slate-50 text-[10px] font-black uppercase text-slate-400 tracking-widest">
+                            <th class="px-8 py-5">Date</th>
+                            <th class="px-8 py-5">Expense Details</th>
+                            <th class="px-8 py-5 text-right">Amount</th>
+                            <th class="px-8 py-5 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenses-list" class="divide-y divide-slate-50"></tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Reports Screen -->
-        <div id="screen-reports" class="screen">
-            <h1 class="text-3xl font-black text-slate-900 mb-8">Financial Analysis</h1>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
-                    <h4 class="text-lg font-bold mb-4 text-slate-700">Income Overview</h4>
-                    <div class="space-y-4" id="reportSalesList">
-                        <!-- Sales summary -->
-                    </div>
-                </div>
-                <div class="bg-white p-8 rounded-[32px] border border-slate-100 shadow-sm">
-                    <h4 class="text-lg font-bold mb-4 text-slate-700">Expense Breakdown</h4>
-                    <div class="space-y-4" id="reportExpenseList">
-                        <!-- Expense summary -->
-                    </div>
-                </div>
+        <!-- Customers Screen -->
+        <div id="screen-customers" class="screen">
+            <div class="flex justify-between items-center mb-10">
+                <h1 class="text-3xl font-black text-slate-900">Customer List</h1>
+                <button onclick="openModal('customerModal')" class="btn-primary">Add Customer</button>
             </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="customers-grid"></div>
+        </div>
+
+        <!-- Products Screen -->
+        <div id="screen-products" class="screen">
+            <div class="flex justify-between items-center mb-10">
+                <h1 class="text-3xl font-black text-slate-900">Product Management</h1>
+                <button onclick="openModal('productModal')" class="btn-primary">Add Product</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="products-grid"></div>
         </div>
 
     </main>
 
+    <!-- Modals -->
+    <div id="modalOverlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <!-- Add Sale Modal -->
+        <div id="saleModal" class="modal-content bg-white w-full max-w-lg rounded-[32px] p-8 hidden">
+            <h3 class="text-2xl font-black mb-6">Record New Sale</h3>
+            <form id="saleForm" class="space-y-4">
+                <input type="date" id="saleDate" class="form-input" required>
+                <select id="saleCustomer" class="form-input" required><option value="">Select Customer</option></select>
+                <select id="saleProduct" class="form-input" required><option value="">Select Product</option></select>
+                <input type="number" id="saleAmount" class="form-input" placeholder="Amount (Rs)" required>
+                <select id="saleStatus" class="form-input font-bold">
+                    <option value="Paid">Paid</option>
+                    <option value="Not Paid">Not Paid</option>
+                </select>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeModal()" class="flex-1 py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl">Cancel</button>
+                    <button type="submit" class="flex-1 py-4 bg-indigo-600 text-white font-bold rounded-2xl">Save Sale</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Add Expense Modal -->
+        <div id="expenseModal" class="modal-content bg-white w-full max-w-lg rounded-[32px] p-8 hidden">
+            <h3 class="text-2xl font-black mb-6">New Expense</h3>
+            <form id="expenseForm" class="space-y-4">
+                <input type="date" id="expDate" class="form-input" required>
+                <input type="text" id="expDesc" class="form-input" placeholder="Expense Description" required>
+                <input type="number" id="expAmount" class="form-input" placeholder="Amount (Rs)" required>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeModal()" class="flex-1 py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl">Cancel</button>
+                    <button type="submit" class="flex-1 py-4 bg-rose-600 text-white font-bold rounded-2xl">Record Expense</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Add Customer Modal -->
+        <div id="customerModal" class="modal-content bg-white w-full max-w-lg rounded-[32px] p-8 hidden">
+            <h3 class="text-2xl font-black mb-6">Add Customer</h3>
+            <form id="customerForm" class="space-y-4">
+                <input type="text" id="custName" class="form-input" placeholder="Customer Name" required>
+                <input type="text" id="custPhone" class="form-input" placeholder="Phone Number">
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeModal()" class="flex-1 py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl">Cancel</button>
+                    <button type="submit" class="flex-1 py-4 bg-indigo-600 text-white font-bold rounded-2xl">Add Customer</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Add Product Modal -->
+        <div id="productModal" class="modal-content bg-white w-full max-w-lg rounded-[32px] p-8 hidden">
+            <h3 class="text-2xl font-black mb-6">New Product</h3>
+            <form id="productForm" class="space-y-4">
+                <input type="text" id="prodName" class="form-input" placeholder="Product Name" required>
+                <input type="number" id="prodPrice" class="form-input" placeholder="Default Price">
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeModal()" class="flex-1 py-4 bg-slate-100 text-slate-600 font-bold rounded-2xl">Cancel</button>
+                    <button type="submit" class="flex-1 py-4 bg-indigo-600 text-white font-bold rounded-2xl">Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
-        let records = JSON.parse(localStorage.getItem('artix_v2_data')) || [];
-        const recordForm = document.getElementById('recordForm');
-        const tableBody = document.getElementById('tableBody');
-        const emptyState = document.getElementById('emptyState');
+        // Data Store
+        let data = JSON.parse(localStorage.getItem('artix_v4_store')) || {
+            sales: [],
+            expenses: [],
+            customers: [],
+            products: []
+        };
 
-        document.getElementById('date').valueAsDate = new Date();
-
+        // Navigation Logic
         function showScreen(screenId) {
-            // Hide all screens
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            // Deactivate all nav links
             document.querySelectorAll('.nav-link').forEach(n => {
                 n.classList.remove('active', 'bg-indigo-600', 'text-white');
                 n.classList.add('text-slate-500');
             });
-
-            // Show selected screen
             document.getElementById('screen-' + screenId).classList.add('active');
-            
-            // Activate selected nav link
             const activeNav = document.getElementById('nav-' + screenId);
             if(activeNav) {
                 activeNav.classList.add('active', 'bg-indigo-600', 'text-white');
                 activeNav.classList.remove('text-slate-500');
             }
-
-            if(screenId === 'records') renderFullLog();
-            if(screenId === 'reports') renderReports();
+            refreshAllUI();
         }
 
-        recordForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const record = {
-                id: Date.now(),
-                date: document.getElementById('date').value,
-                desc: document.getElementById('description').value,
-                type: document.getElementById('type').value,
-                amount: parseFloat(document.getElementById('amount').value)
-            };
-            records.unshift(record);
-            syncData();
-            recordForm.reset();
-            document.getElementById('date').valueAsDate = new Date();
-        });
-
-        function deleteRecord(id) {
-            records = records.filter(r => r.id !== id);
-            syncData();
-        }
-
-        function clearAll() {
-            if(confirm("Warning: Kya aap waqai sara record saaf karna chahte hain?")) {
-                records = [];
-                syncData();
+        // Modal Controls
+        function openModal(id) {
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.querySelectorAll('.modal-content').forEach(m => m.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+            
+            if(id === 'saleModal') {
+                const cSelect = document.getElementById('saleCustomer');
+                const pSelect = document.getElementById('saleProduct');
+                cSelect.innerHTML = '<option value="">Select Customer</option>' + data.customers.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+                pSelect.innerHTML = '<option value="">Select Product</option>' + data.products.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+                document.getElementById('saleDate').valueAsDate = new Date();
             }
+            if(id === 'expenseModal') document.getElementById('expDate').valueAsDate = new Date();
         }
 
-        function syncData() {
-            localStorage.setItem('artix_v2_data', JSON.stringify(records));
-            refreshUI();
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
         }
 
-        function refreshUI() {
-            tableBody.innerHTML = '';
-            let sales = 0;
-            let expenses = 0;
-
-            if (records.length === 0) {
-                emptyState.classList.remove('hidden');
-            } else {
-                emptyState.classList.add('hidden');
-                // Only show last 10 in dashboard
-                records.slice(0, 10).forEach(r => {
-                    const isSale = r.type === 'sale';
-                    const row = document.createElement('tr');
-                    row.className = "hover:bg-slate-50 transition-colors group";
-                    row.innerHTML = `
-                        <td class="px-8 py-5 text-xs font-bold text-slate-500">${formatDate(r.date)}</td>
-                        <td class="px-8 py-5 text-sm font-bold text-slate-700">${r.desc}</td>
-                        <td class="px-8 py-5">
-                            <span class="type-badge ${isSale ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}">
-                                ${isSale ? 'Sale' : 'Expense'}
-                            </span>
-                        </td>
-                        <td class="px-8 py-5 text-right font-black ${isSale ? 'text-emerald-600' : 'text-rose-600'}">
-                            ${isSale ? '+' : '-'} Rs ${r.amount.toLocaleString()}
-                        </td>
-                        <td class="px-8 py-5 text-center">
-                            <button onclick="deleteRecord(${r.id})" class="text-slate-300 hover:text-rose-500 transition-colors opacity-0 group-hover:opacity-100">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            }
-
-            records.forEach(r => {
-                if(r.type === 'sale') sales += r.amount; else expenses += r.amount;
-            });
-
-            document.getElementById('totalSale').innerText = `Rs ${sales.toLocaleString()}`;
-            document.getElementById('totalExpense').innerText = `Rs ${expenses.toLocaleString()}`;
-            const net = sales - expenses;
-            const netEl = document.getElementById('netProfit');
-            netEl.innerText = `Rs ${net.toLocaleString()}`;
-            netEl.style.color = net >= 0 ? '#10b981' : '#ef4444';
+        // Data Management
+        function saveAndRefresh() {
+            localStorage.setItem('artix_v4_store', JSON.stringify(data));
+            closeModal();
+            refreshAllUI();
         }
 
-        function renderFullLog() {
-            const body = document.getElementById('fullLogBody');
-            body.innerHTML = '';
-            records.forEach(r => {
-                const isSale = r.type === 'sale';
-                const row = document.createElement('tr');
-                row.className = "hover:bg-slate-50 transition-colors";
-                row.innerHTML = `
-                    <td class="px-8 py-4 text-xs font-bold text-slate-500">${formatDate(r.date)}</td>
-                    <td class="px-8 py-4 text-sm font-bold text-slate-700">${r.desc}</td>
-                    <td class="px-8 py-4">
-                        <span class="type-badge ${isSale ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}">
-                            ${r.type}
-                        </span>
-                    </td>
-                    <td class="px-8 py-4 text-right font-black ${isSale ? 'text-emerald-600' : 'text-rose-600'}">
-                        Rs ${r.amount.toLocaleString()}
-                    </td>
-                `;
-                body.appendChild(row);
-            });
-        }
-
-        function renderReports() {
-            const salesList = document.getElementById('reportSalesList');
-            const expenseList = document.getElementById('reportExpenseList');
-            salesList.innerHTML = '';
-            expenseList.innerHTML = '';
-
-            const sales = records.filter(r => r.type === 'sale');
-            const expenses = records.filter(r => r.type === 'expense');
-
-            if(sales.length === 0) salesList.innerHTML = '<p class="text-slate-400 text-sm italic">No sales data.</p>';
-            if(expenses.length === 0) expenseList.innerHTML = '<p class="text-slate-400 text-sm italic">No expense data.</p>';
-
-            sales.slice(0, 5).forEach(s => {
-                salesList.innerHTML += `
-                    <div class="flex justify-between items-center p-3 bg-emerald-50 rounded-xl">
-                        <span class="text-xs font-bold text-slate-600">${s.desc}</span>
-                        <span class="text-sm font-black text-emerald-700">Rs ${s.amount.toLocaleString()}</span>
-                    </div>
-                `;
-            });
-
-            expenses.slice(0, 5).forEach(e => {
-                expenseList.innerHTML += `
-                    <div class="flex justify-between items-center p-3 bg-rose-50 rounded-xl">
-                        <span class="text-xs font-bold text-slate-600">${e.desc}</span>
-                        <span class="text-sm font-black text-rose-700">Rs ${e.amount.toLocaleString()}</span>
-                    </div>
-                `;
-            });
-        }
-
-        function formatDate(d) {
-            return new Date(d).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-        }
-
-        function exportToCSV() {
-            if (records.length === 0) return;
-            let csv = "Date,Description,Type,Amount\n";
-            records.forEach(r => csv += `${r.date},"${r.desc}",${r.type},${r.amount}\n`);
-            const blob = new Blob([csv], { type: 'text/csv' });
+        function backupData() {
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
+            const a = document.createElement('a');
             a.href = url;
-            a.download = `Artix_Ledger_${new Date().toISOString().slice(0,10)}.csv`;
+            a.download = `Artix_Backup_${new Date().toISOString().slice(0,10)}.json`;
             a.click();
         }
 
-        // Initialize UI
-        refreshUI();
+        function restoreData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const restored = JSON.parse(e.target.result);
+                    if (restored.sales && restored.expenses) {
+                        data = restored;
+                        saveAndRefresh();
+                        alert("Data successfully restore ho gaya hai!");
+                    } else {
+                        throw new Error("Invalid file format");
+                    }
+                } catch (err) {
+                    alert("Ghalti: Yeh Artix backup file nahi hai.");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Form Handlers
+        document.getElementById('saleForm').onsubmit = (e) => {
+            e.preventDefault();
+            data.sales.unshift({
+                id: Date.now(),
+                date: document.getElementById('saleDate').value,
+                customer: document.getElementById('saleCustomer').value,
+                product: document.getElementById('saleProduct').value,
+                amount: parseFloat(document.getElementById('saleAmount').value),
+                status: document.getElementById('saleStatus').value
+            });
+            saveAndRefresh();
+            e.target.reset();
+        };
+
+        document.getElementById('expenseForm').onsubmit = (e) => {
+            e.preventDefault();
+            data.expenses.unshift({
+                id: Date.now(),
+                date: document.getElementById('expDate').value,
+                desc: document.getElementById('expDesc').value,
+                amount: parseFloat(document.getElementById('expAmount').value)
+            });
+            saveAndRefresh();
+            e.target.reset();
+        };
+
+        document.getElementById('customerForm').onsubmit = (e) => {
+            e.preventDefault();
+            data.customers.push({ id: Date.now(), name: document.getElementById('custName').value, phone: document.getElementById('custPhone').value });
+            saveAndRefresh();
+            e.target.reset();
+        };
+
+        document.getElementById('productForm').onsubmit = (e) => {
+            e.preventDefault();
+            data.products.push({ id: Date.now(), name: document.getElementById('prodName').value, price: document.getElementById('prodPrice').value });
+            saveAndRefresh();
+            e.target.reset();
+        };
+
+        // UI Refresh Logic
+        function refreshAllUI() {
+            renderDashboard();
+            renderSales();
+            renderExpenses();
+            renderCustomers();
+            renderProducts();
+        }
+
+        function renderDashboard() {
+            let totalSales = data.sales.reduce((sum, s) => sum + s.amount, 0);
+            let totalExp = data.expenses.reduce((sum, e) => sum + e.amount, 0);
+            
+            document.getElementById('dash-total-sales').innerText = `Rs ${totalSales.toLocaleString()}`;
+            document.getElementById('dash-total-expenses').innerText = `Rs ${totalExp.toLocaleString()}`;
+            const net = totalSales - totalExp;
+            const netEl = document.getElementById('dash-net-profit');
+            netEl.innerText = `Rs ${net.toLocaleString()}`;
+            netEl.className = `text-3xl font-black ${net >= 0 ? 'text-slate-900' : 'text-rose-600'}`;
+
+            const activity = document.getElementById('recent-activity-list');
+            activity.innerHTML = data.sales.slice(0, 5).map(s => `
+                <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
+                    <div class="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600"><i class="fas fa-plus text-xs"></i></div>
+                    <div class="flex-1"><p class="text-sm font-bold text-slate-800">${s.customer}</p><p class="text-[10px] text-slate-400 font-bold">${s.product}</p></div>
+                    <p class="text-sm font-black text-indigo-600">Rs ${s.amount.toLocaleString()}</p>
+                </div>
+            `).join('') || '<p class="text-center text-slate-400 text-sm italic py-4">No recent activity</p>';
+
+            const pending = document.getElementById('pending-payments-list');
+            const unpaids = data.sales.filter(s => s.status === 'Not Paid');
+            if(unpaids.length > 0) {
+                pending.innerHTML = unpaids.slice(0, 5).map(u => `
+                    <div class="flex justify-between items-center p-4 bg-rose-50/50 border border-rose-100 rounded-2xl">
+                        <div class="flex flex-col">
+                            <span class="text-sm font-black text-slate-800">${u.customer}</span>
+                            <span class="text-[10px] font-bold text-slate-400">${u.date}</span>
+                        </div>
+                        <span class="text-sm font-black text-rose-600">Rs ${u.amount.toLocaleString()}</span>
+                    </div>
+                `).join('');
+            } else {
+                pending.innerHTML = '<div class="text-center py-10 text-slate-300 font-medium italic">Koi pending payments nahi hain.</div>';
+            }
+        }
+
+        function renderSales() {
+            const list = document.getElementById('sales-list');
+            list.innerHTML = data.sales.map(s => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-8 py-4 text-xs font-bold text-slate-400">${s.date}</td>
+                    <td class="px-8 py-4 font-bold text-slate-700">${s.customer}</td>
+                    <td class="px-8 py-4 text-sm text-slate-600">${s.product}</td>
+                    <td class="px-8 py-4">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black ${s.status === 'Paid' ? 'badge-paid' : 'badge-unpaid'}">
+                            ${s.status}
+                        </span>
+                    </td>
+                    <td class="px-8 py-4 text-right font-black text-indigo-600">Rs ${s.amount.toLocaleString()}</td>
+                    <td class="px-8 py-4 text-center">
+                        <button onclick="deleteItem('sales', ${s.id})" class="text-slate-300 hover:text-rose-500 transition-colors"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderExpenses() {
+            const list = document.getElementById('expenses-list');
+            list.innerHTML = data.expenses.map(e => `
+                <tr class="hover:bg-rose-50/30 transition-colors">
+                    <td class="px-8 py-4 text-xs font-bold text-slate-400">${e.date}</td>
+                    <td class="px-8 py-4 font-bold text-slate-700">${e.desc}</td>
+                    <td class="px-8 py-4 text-right font-black text-rose-600">Rs ${e.amount.toLocaleString()}</td>
+                    <td class="px-8 py-4 text-center">
+                        <button onclick="deleteItem('expenses', ${e.id})" class="text-slate-300 hover:text-rose-500 transition-colors"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderCustomers() {
+            const grid = document.getElementById('customers-grid');
+            grid.innerHTML = data.customers.map(c => `
+                <div class="stat-card relative group">
+                    <button onclick="deleteItem('customers', ${c.id})" class="absolute top-4 right-4 text-slate-200 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><i class="fas fa-times-circle"></i></button>
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600 font-black">${c.name[0]}</div>
+                        <div>
+                            <h4 class="font-black text-slate-800">${c.name}</h4>
+                            <p class="text-xs text-slate-400 font-bold">${c.phone || 'No Phone'}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = data.products.map(p => `
+                <div class="stat-card border-l-4 border-indigo-500 relative group">
+                    <button onclick="deleteItem('products', ${p.id})" class="absolute top-4 right-4 text-slate-200 hover:text-rose-500 opacity-0 group-hover:opacity-100 transition-all"><i class="fas fa-times-circle"></i></button>
+                    <h4 class="font-black text-slate-800 mb-1">${p.name}</h4>
+                    <p class="text-sm font-black text-indigo-600">Rs ${p.price || 0}</p>
+                </div>
+            `).join('');
+        }
+
+        function deleteItem(type, id) {
+            if(confirm("Kya aap waqai ise delete karna chahte hain?")) {
+                data[type] = data[type].filter(item => item.id !== id);
+                saveAndRefresh();
+            }
+        }
+
+        // Init
+        refreshAllUI();
     </script>
 </body>
 </html>
